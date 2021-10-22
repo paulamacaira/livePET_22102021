@@ -130,7 +130,7 @@ augment(covid_fit) %>%
 
 covid_fit = covid %>% 
   filter(state == "TOTAL",
-         date <= "2021-08-16") %>% 
+         date <= "2021-09-22") %>% 
   model(Seasonal_naive = SNAIVE(newCases))
 
 covid_fit %>% 
@@ -191,6 +191,7 @@ covid_RJ %>%
 sim = fit %>% 
   generate(h = 14, times = 5, bootstrap = TRUE)
 sim
+View(sim)
 
 covid_RJ %>% 
   filter(date >= "2021-08-01") %>%
