@@ -16,13 +16,15 @@ library(fpp3)
 # Um tsibble permite o armazenamento e manipulação de múltiplas séries temporais em R
 # Ele contêm: um index (informação de tempo), variáveis medidas e variáveis chave (identificadores únicos opcionais para cada série)
 
-global_economy
-tourism
+global_economy %>% 
+  View()
+tourism %>% 
+  View()
 
 # lendo um arquivo csv e convertendo para tsibble
 
 covid = readr::read_csv("https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-states.csv")
-covid
+covid %>% View()
 
 covid = readr::read_csv("https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-states.csv") %>% 
   select(date, state, newDeaths, newCases)%>% 
@@ -30,7 +32,7 @@ covid = readr::read_csv("https://raw.githubusercontent.com/wcota/covid19br/maste
     index = date,
     key = state
   ) %>% 
-  filter(date < today()) %>% 
+  filter(date < lubridate::today()) %>% 
   group_by(state) %>% 
   mutate(MM_mortes = zoo::rollmean(newDeaths, k = 7, fill = NA, align = "right"),
          MM_casos = zoo::rollmean(newCases, k = 7, fill = NA, align = "right"))
@@ -41,7 +43,7 @@ covid
 covid %>% 
   filter(state == "TOTAL") %>% 
   autoplot(newDeaths, color = "grey") +
-  geom_line(aes(y = MM_mortes)) +
+  geom_line(aes(y = MM_mortes), color = "red") +
   labs(x="Dia",y="Mortes", title="Média Móvel (7 dias) do número de mortes por COVID-19 no Brasil")
 
 covid %>% 
@@ -93,7 +95,7 @@ covid_fit
 
 covid_fc = covid_fit %>% 
   forecast(h = 12)
-covid_fc
+covid_fc %>% View()
 
 # fable é uma tabela de previsão com previsões pontuais e distribuições
 
@@ -182,7 +184,7 @@ fit %>%
   autoplot(covid_RJ %>% filter(date >= "2021-08-01"))
 
 covid_RJ %>%
-  model(ets = ETS(newDeaths ~ trend("Ad"))) %>% 
+  model(ets = ETS(newDeaths ~ trend("Ad"))) %>%
   forecast(h = 14) %>% 
   autoplot(covid_RJ %>% filter(date >= "2021-08-01"))
 
